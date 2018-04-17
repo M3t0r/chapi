@@ -10,6 +10,7 @@
 namespace Chapi\Entity\Marathon;
 
 use Chapi\Entity\JobEntityInterface;
+use Chapi\Entity\FilterUnknownFieldsIterator;
 use Chapi\Entity\Marathon\AppEntity\Container;
 use Chapi\Entity\Marathon\AppEntity\HealthCheck;
 use Chapi\Entity\Marathon\AppEntity\IpAddress;
@@ -56,7 +57,7 @@ class MarathonAppEntity implements JobEntityInterface
 
     public $labels = null;
 
-    public $uris = [];
+    #public $uris = [];
 
     public $dependencies = [];
 
@@ -155,7 +156,8 @@ class MarathonAppEntity implements JobEntityInterface
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this);
+        return new \ArrayIterator($this->jsonSerialize());
+        #return new FilterUnknownFieldsIterator(new \ArrayIterator($this));
     }
 
     /**
@@ -164,13 +166,15 @@ class MarathonAppEntity implements JobEntityInterface
      */
     public function getSimpleArrayCopy()
     {
-        $_aReturn = [];
+        $return = [];
 
-        foreach ($this as $_sProperty => $mValue) {
-            $_aReturn[$_sProperty] = (is_array($mValue) || is_object($mValue)) ? json_encode($mValue) : $mValue;
+        foreach ($this as $property => $value) {
+            if ($property != "unknownFields") {
+                $return[$property] = (is_array($value) || is_object($value)) ? json_encode($value) : $value;
+            }
         }
 
-        return $_aReturn;
+        return $return;
     }
 
     /**

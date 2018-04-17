@@ -285,6 +285,36 @@ class MarathonJobComparisonBusinessCaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDiff, $gotDiff, "Expected diff doesn't matched recieved diff");
     }
 
+    public function testJobDiffWithUnkownFields()
+    {
+        $localEntity = $this->getValidMarathonAppEntity('/main/id1');
+
+        $remoteEntity = $this->getValidMarathonAppEntity('/main/id1');
+        $remoteEntity->unknownFields = ['uniqueField' => 'notExpectedValue'];
+
+        $this->localRepository
+            ->getJob(Argument::exact($localEntity->getKey()))
+            ->willReturn($localEntity);
+
+        $this->remoteRepository
+            ->getJob(Argument::exact($remoteEntity->getKey()))
+            ->willReturn($remoteEntity);
+
+
+        $marathonJobCompare = new MarathonJobComparisonBusinessCase(
+            $this->localRepository->reveal(),
+            $this->remoteRepository->reveal(),
+            $this->diffCompare->reveal()
+        );
+
+        $gotDiff = $marathonJobCompare->getJobDiff('/main/id1');
+
+        $expectedDiff = [
+            'uniqueField' => null
+        ];
+        $this->assertEquals($expectedDiff, $gotDiff, "Expected diff doesn't matched recieved diff");
+    }
+
 
     public function testIsJobAvailableSuccess()
     {

@@ -8,7 +8,7 @@
 
 namespace Chapi\Entity\Chronos\JobEntity;
 
-class ContainerEntity
+class ContainerEntity implements \JsonSerializable
 {
     /**
      * @param array|object $jobData
@@ -48,10 +48,23 @@ class ContainerEntity
     
     /** @var string  */
     public $network = '';
-    
+
     /** @var ContainerVolumeEntity[] */
     public $volumes = [];
+
+    /** @var string[] */
+    public $parameters = [];
     
     /** @var bool  */
     public $forcePullImage = false;
+
+    public function jsonSerialize()
+    {
+        $return = (array) $this;
+
+        $return += $this->unknownFields;
+        unset($return['unknownFields']);
+
+        return $return;
+    }
 }

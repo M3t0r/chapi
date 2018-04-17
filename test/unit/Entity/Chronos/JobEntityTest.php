@@ -212,4 +212,15 @@ class JobEntityTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(property_exists($jobEntityTest->container, 'unknownFields'));
         $this->assertFalse(property_exists($jobEntityTest->container->volumes[0], 'unknownFields'));
     }
+
+    public function testUnknownFieldsNotInIterator()
+    {
+        $jobEntity = new ChronosJobEntity([
+            'unique_field' => "I feel like it's 2005"
+        ]);
+
+        foreach($jobEntity->getIterator() as $key => $value) {
+            $this->assertNotEquals("unknownFields", $key);
+        }
+    }
 }

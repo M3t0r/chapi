@@ -76,4 +76,16 @@ class MarathonAppEntityTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse(property_exists($jobEntityTest, 'unknownFields'));
     }
+
+    public function testUnknownFieldsNotInIterator()
+    {
+        $jobEntity = new MarathonAppEntity([
+            'unique_field' => "I feel like it's 2005",
+            'unique_array' => ['unique', 'values']
+        ]);
+
+        foreach($jobEntity->getIterator() as $key => $value) {
+            $this->assertNotEquals("unknownFields", $key);
+        }
+    }
 }

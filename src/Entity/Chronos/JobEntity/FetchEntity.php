@@ -8,7 +8,7 @@
 
 namespace Chapi\Entity\Chronos\JobEntity;
 
-class FetchEntity
+class FetchEntity implements \JsonSerializable
 {
     /**
      * @param array|object $jobData
@@ -45,4 +45,14 @@ class FetchEntity
     
     /** @var bool  */
     public $executable = false;
+
+    public function jsonSerialize()
+    {
+        $return = (array) $this;
+
+        $return += $this->unknownFields;
+        unset($return['unknownFields']);
+
+        return $return;
+    }
 }

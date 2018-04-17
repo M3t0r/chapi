@@ -8,7 +8,7 @@
 
 namespace Chapi\Entity\Chronos\JobEntity;
 
-class ContainerVolumeEntity
+class ContainerVolumeEntity implements \JsonSerializable
 {
     /**
      * @param array|object $jobData
@@ -44,4 +44,14 @@ class ContainerVolumeEntity
      * val RW, RO = Value
      */
     public $mode = '';
+
+    public function jsonSerialize()
+    {
+        $return = (array) $this;
+
+        $return += $this->unknownFields;
+        unset($return['unknownFields']);
+
+        return $return;
+    }
 }

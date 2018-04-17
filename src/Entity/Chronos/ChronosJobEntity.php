@@ -11,6 +11,7 @@ namespace Chapi\Entity\Chronos;
 
 use Chapi\Entity\Chronos\JobEntity\ContainerEntity;
 use Chapi\Entity\Chronos\JobEntity\FetchEntity;
+use Chapi\Entity\FilterUnknownFieldsIterator;
 use Chapi\Entity\JobEntityInterface;
 
 class ChronosJobEntity implements JobEntityInterface
@@ -123,7 +124,9 @@ class ChronosJobEntity implements JobEntityInterface
         $return = [];
 
         foreach ($this as $property => $value) {
-            $return[$property] = (is_array($value) || is_object($value)) ? json_encode($value) : $value;
+            if ($property != "unknownFields") {
+                $return[$property] = (is_array($value) || is_object($value)) ? json_encode($value) : $value;
+            }
         }
 
         return $return;
@@ -197,7 +200,7 @@ class ChronosJobEntity implements JobEntityInterface
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this);
+        return new FilterUnknownFieldsIterator(new \ArrayIterator($this));
     }
 
     /**
